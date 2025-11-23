@@ -1,0 +1,14 @@
+{
+  "name": "p1ngry",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/p1ngry",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "oderwat.indent-rainbow"
+      ]
+    }
+  }
+}
