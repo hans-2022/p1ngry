@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func startP1Reader(ctx context.Context, jobs chan<- string, wg *sync.WaitGroup) error {
+func StartP1Reader(ctx context.Context, jobs chan<- string, wg *sync.WaitGroup) error {
 	wg.Add(1)
 
 	go func() {
@@ -24,7 +24,7 @@ func startP1Reader(ctx context.Context, jobs chan<- string, wg *sync.WaitGroup) 
 				return
 			case <-ticker.C:
 				slog.Info("Handling new telegram")
-				rawTelegram := "/ISk5\2MT382-1000\n0-0:1.0.0(230623150405S)\n1-0:1.7.0(00123.456*kW)\n1-0:2.7.0(00000.000*kW)\n!"
+				rawTelegram := "/ISk5\x02MT382-1000\n0-0:1.0.0(230623150405S)\n1-0:1.7.0(00123.456*kW)\n1-0:2.7.0(00000.000*kW)\n!"
 				jobs <- rawTelegram
 			}
 		}

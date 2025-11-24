@@ -1,16 +1,12 @@
 package dsmr
 
 import (
-	"log/slog"
 	"context"
+	"log/slog"
 	"sync"
 )
 
-func worker(ctx context.Context,
-	id int,
-	jobs <-chan string,
-	wg *sync.WaitGroup,
-) {
+func Worker(ctx context.Context, id int, jobs <-chan string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -30,6 +26,12 @@ func worker(ctx context.Context,
 				continue
 			}
 
+			if err := handleTelegram(ctx, telegram); err != nil {
+				slog.Error("Failed to handle telegram", "worker_id", id, "error", err)
+				return
+			}
+
 			slog.Info("Processed telegram", "worker_id", id, "telegram", telegram)
 		}
+	}
 }

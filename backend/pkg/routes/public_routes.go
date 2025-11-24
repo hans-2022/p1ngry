@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/create-go-app/fiber-go-template/app/controllers"
+	"github.com/erwindouna/p1ngry/app/controllers"
 	"github.com/gofiber/fiber/v2"
 )
 

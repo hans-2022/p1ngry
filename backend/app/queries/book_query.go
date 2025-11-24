@@ -1,7 +1,7 @@
 package queries
 
 import (
-	"github.com/create-go-app/fiber-go-template/app/models"
+	"github.com/erwindouna/p1ngry/app/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )

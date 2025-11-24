@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/create-go-app/fiber-go-template/app/models"
-	"github.com/create-go-app/fiber-go-template/pkg/utils"
-	"github.com/create-go-app/fiber-go-template/platform/cache"
-	"github.com/create-go-app/fiber-go-template/platform/database"
+	"github.com/erwindouna/p1ngry/app/models"
+	"github.com/erwindouna/p1ngry/pkg/utils"
+	"github.com/erwindouna/p1ngry/platform/cache"
+	"github.com/erwindouna/p1ngry/platform/database"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"

@@ -4,21 +4,19 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"sync"
 	"time"
 
-	"sync"
-
-	"github.com/erwindouna/p1ngry/backend/pkg/dsmr/reader"
-
-	"github.com/erwindouna/p1ngry/backend/pkg/configs"
-	"github.com/erwindouna/p1ngry/backend/pkg/middleware"
-	"github.com/erwindouna/p1ngry/backend/pkg/routes"
-	"github.com/erwindouna/p1ngry/backend/pkg/utils"
+	"github.com/erwindouna/p1ngry/pkg/configs"
+	"github.com/erwindouna/p1ngry/pkg/dsmr"
+	"github.com/erwindouna/p1ngry/pkg/middleware"
+	"github.com/erwindouna/p1ngry/pkg/routes"
+	"github.com/erwindouna/p1ngry/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 
-	_ "github.com/erwindouna/p1ngry/backend/docs" // load API Docs files (Swagger)
-	_ "github.com/joho/godotenv/autoload"         // load .env file automatically
+	_ "github.com/erwindouna/p1ngry/docs" // load API Docs files (Swagger)
+	_ "github.com/joho/godotenv/autoload" // load .env file automatically
 )
 
 // @title API
@@ -57,12 +55,15 @@ func main() {
 	var wg sync.WaitGroup
 
 	jobs := make(chan string, 100)
-	reader.startP1Reader(ctx, jobs, &wg)
+	if err := dsmr.StartP1Reader(ctx, jobs, &wg); err != nil {
+		slog.Error("Failed to start P1 reader", "error", err)
+		return
+	}
 
 	numWorkers := 5
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go reader.Worker(ctx, i, jobs, &wg)
+		go dsmr.Worker(ctx, i, jobs, &wg)
 	}
 
 	time.AfterFunc(time.Minute*5, func() {
