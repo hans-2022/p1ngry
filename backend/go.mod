@@ -1,9 +1,9 @@
-module github.com/create-go-app/fiber-go-template
+module github.com/erwindouna/p1ngry
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.24.1
-
+toolchain go1.25.0
+	
 require (
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/go-sql-driver/mysql v1.9.3

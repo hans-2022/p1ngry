@@ -1,18 +1,24 @@
 package main
 
 import (
+	"context"
+	"log/slog"
 	"os"
+	"time"
 
-	"github.com/create-go-app/fiber-go-template/pkg/configs"
-	"github.com/create-go-app/fiber-go-template/pkg/middleware"
-	"github.com/create-go-app/fiber-go-template/pkg/routes"
-	"github.com/create-go-app/fiber-go-template/pkg/utils"
+	"sync"
+
+	"github.com/erwindouna/p1ngry/backend/pkg/dsmr/reader"
+
+	"github.com/erwindouna/p1ngry/backend/pkg/configs"
+	"github.com/erwindouna/p1ngry/backend/pkg/middleware"
+	"github.com/erwindouna/p1ngry/backend/pkg/routes"
+	"github.com/erwindouna/p1ngry/backend/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 
-	_ "github.com/create-go-app/fiber-go-template/docs" // load API Docs files (Swagger)
-
-	_ "github.com/joho/godotenv/autoload" // load .env file automatically
+	_ "github.com/erwindouna/p1ngry/backend/docs" // load API Docs files (Swagger)
+	_ "github.com/joho/godotenv/autoload"         // load .env file automatically
 )
 
 // @title API
@@ -29,6 +35,7 @@ import (
 // @name Authorization
 func main() {
 	// Define Fiber config.
+	slog.Info("Starting p1ngry")
 	config := configs.FiberConfig()
 
 	// Define a new Fiber app with config.
@@ -42,6 +49,27 @@ func main() {
 	routes.PublicRoutes(app)  // Register a public routes for app.
 	routes.PrivateRoutes(app) // Register a private routes for app.
 	routes.NotFoundRoute(app) // Register route for 404 Error.
+
+	slog.Info("Starting P1 reader service")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	var wg sync.WaitGroup
+
+	jobs := make(chan string, 100)
+	reader.startP1Reader(ctx, jobs, &wg)
+
+	numWorkers := 5
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go reader.Worker(ctx, i, jobs, &wg)
+	}
+
+	time.AfterFunc(time.Minute*5, func() {
+		slog.Info("Shutting down P1 reader service")
+		cancel()
+		wg.Wait()
+	})
 
 	// Start server (with or without graceful shutdown).
 	if os.Getenv("STAGE_STATUS") == "dev" {
