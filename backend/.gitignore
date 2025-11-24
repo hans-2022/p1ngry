@@ -4,6 +4,8 @@
 # Dev build
 build/
 tmp/
+p1ngry
+p1ngry.exe
 
 # Test
 *.out
