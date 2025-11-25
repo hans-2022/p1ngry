@@ -33,15 +33,15 @@ archives:
 checksum:
   name_template: "checksums.txt"
 
-signs:
-  - artifacts: checksum
-    cmd: cosign
-    args:
-      - sign-blob
-      - --key=cosign.key
-      - --output
-      - "${artifact}.sig"
-      - "${artifact}"
+# signs:
+#   - artifacts: checksum
+#     cmd: cosign
+#     args:
+#       - sign-blob
+#       - --key=cosign.key
+#       - --output
+#       - "${artifact}.sig"
+#       - "${artifact}"
 
 dockers:
   - image_templates:
