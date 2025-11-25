@@ -24,9 +24,9 @@ archives:
     builds:
       - p1nrgy
     format: tar.gz
-    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    replacements:
-      darwin: macOS
+    # Rename darwin to macOS using a template instead of the (removed) `replacements` field
+    name_template: >-
+      {{ .Binary }}_{{ .Version }}_{{- if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}
     files:
       - LICENSE
       - README.md
@@ -37,7 +37,12 @@ checksum:
 signs:
   - artifacts: checksum
     cmd: cosign
-    args: ["sign-blob", "--key=cosign.key", "--output", "${artifact}.sig", "${artifact}"]
+    args:
+      - sign-blob
+      - --key=cosign.key
+      - --output
+      - "${artifact}.sig"
+      - "${artifact}"
 
 dockers:
   - image_templates:
@@ -51,12 +56,12 @@ dockers:
 brews:
   - name: p1nrgy
     repository:
-      owner: {{ .Repo }}
-      name: homebrew-tap
+      owner: "erwindouna"
+      name: "homebrew-tap"
     commit_author:
-      name: goreleaser
-      email: e.douna@gmail.com
-    description: "CLI tool for interacting with P1 electricity meter data."
+      name: "goreleaser"
+      email: "e.douna@gmail.com"
+    description: "Tool for interacting with P1 electricity meter data."
     test: |
       system "#{bin}/p1nrgy --version"
     install: |
@@ -71,7 +76,7 @@ changelog:
 
 release:
   github:
-    owner: {{ .Repo }}
-    name: p1nrgy
+    owner: "erwindouna"
+    name: "p1nrgy"
   draft: false
   prerelease: auto
