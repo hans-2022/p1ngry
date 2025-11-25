@@ -45,12 +45,25 @@ checksum:
 
 dockers:
   - image_templates:
-      - "ghcr.io/erwindouna/p1nrgy:{{ .Version }}"
-      - "ghcr.io/erwindouna/p1nrgy:latest"
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
     dockerfile: Dockerfile
     goos: linux
     goarch: amd64
-
+  - image_templates:
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
+    dockerfile: Dockerfile
+    goos: linux
+    goarch: arm64
+docker_manifests:
+  - name_template: ghcr.io/erwindouna/p1nrgy:{{ .Version }}
+    image_templates:
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
+  - name_template: ghcr.io/erwindouna/p1nrgy:latest
+    image_templates:
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
+      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
+      
 changelog:
   sort: asc
   filters:
