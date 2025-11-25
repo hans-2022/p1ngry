@@ -95,6 +95,7 @@ func RegisterHandler(handler Handler) {
 
 // Subscribe returns a buffered channel receiving telegram metrics and an
 // unsubscribe function that must be called when the consumer is finished.
+// A neat pub/sub pattern.
 func Subscribe(buffer int) (<-chan SmartMeterData, func()) {
 	if buffer <= 0 {
 		buffer = defaultSubscriberBuffer
@@ -273,9 +274,8 @@ func newSource(cfg Config) (source, error) {
 }
 
 type serialSource struct {
-	port      io.ReadCloser
-	reader    *bufio.Reader
-	connected bool
+	port   io.ReadCloser
+	reader *bufio.Reader
 }
 
 func newSerialSource(cfg SerialConfig) (*serialSource, error) {
