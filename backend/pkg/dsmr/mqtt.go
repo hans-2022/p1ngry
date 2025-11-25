@@ -14,11 +14,12 @@ import (
 )
 
 type MQTTConfig struct {
-	Broker   string
-	ClientID string
-	Username string
-	Password string
-	Topic    string
+	Broker    string
+	ClientID  string
+	Username  string
+	Password  string
+	Topic     string
+	Connected bool
 }
 
 const defaultMQTTBuffer = 16

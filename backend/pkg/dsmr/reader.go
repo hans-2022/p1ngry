@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/roaldnefs/go-dsmr"
@@ -23,6 +24,8 @@ const (
 	ModeSerial Mode = "serial"
 	ModeMock   Mode = "mock"
 )
+
+const defaultSubscriberBuffer = 32
 
 type Config struct {
 	Mode   Mode
@@ -76,6 +79,9 @@ var (
 	externalHandlers []Handler
 	runMu            sync.Mutex
 	runCancel        context.CancelFunc
+	subscribersMu    sync.RWMutex
+	subscribers      = make(map[uint64]chan SmartMeterData)
+	subscriberSeq    atomic.Uint64
 )
 
 func RegisterHandler(handler Handler) {
@@ -87,12 +93,74 @@ func RegisterHandler(handler Handler) {
 	handlersMu.Unlock()
 }
 
+// Subscribe returns a buffered channel receiving telegram metrics and an
+// unsubscribe function that must be called when the consumer is finished.
+func Subscribe(buffer int) (<-chan SmartMeterData, func()) {
+	if buffer <= 0 {
+		buffer = defaultSubscriberBuffer
+	}
+
+	ch := make(chan SmartMeterData, buffer)
+	id := subscriberSeq.Add(1)
+
+	subscribersMu.Lock()
+	subscribers[id] = ch
+	subscribersMu.Unlock()
+
+	unsubscribe := func() {
+		subscribersMu.Lock()
+		sub, ok := subscribers[id]
+		if ok {
+			delete(subscribers, id)
+		}
+		subscribersMu.Unlock()
+
+		if ok {
+			close(sub)
+		}
+	}
+
+	return ch, unsubscribe
+}
+
 func dispatchHandlers(ctx context.Context, data SmartMeterData) {
 	handlersMu.RLock()
-	defer handlersMu.RUnlock()
-	for _, handler := range externalHandlers {
+	handlers := append([]Handler(nil), externalHandlers...)
+	handlersMu.RUnlock()
+	for _, handler := range handlers {
 		handler.Handle(ctx, data)
 	}
+
+	subscribersMu.RLock()
+	subs := make([]subscriberEntry, 0, len(subscribers))
+	for id, ch := range subscribers {
+		subs = append(subs, subscriberEntry{id: id, ch: ch})
+	}
+	subscribersMu.RUnlock()
+
+	for _, sub := range subs {
+		func(entry subscriberEntry) {
+			defer func() {
+				if r := recover(); r != nil {
+					subscribersMu.Lock()
+					if existing, ok := subscribers[entry.id]; ok && existing == entry.ch {
+						delete(subscribers, entry.id)
+					}
+					subscribersMu.Unlock()
+				}
+			}()
+
+			select {
+			case entry.ch <- data:
+			default:
+			}
+		}(sub)
+	}
+}
+
+type subscriberEntry struct {
+	id uint64
+	ch chan SmartMeterData
 }
 
 func CurrentMetrics() SmartMeterData {
@@ -222,7 +290,7 @@ func newSerialSource(cfg SerialConfig) (*serialSource, error) {
 
 	timeout := cfg.ReadTimeout
 	if timeout <= 0 {
-		timeout = 2 * time.Second
+		timeout = 5 * time.Second
 	}
 
 	serialCfg := &serial.Config{
@@ -508,6 +576,7 @@ func boolFromEnv(key string, def bool) bool {
 	return value
 }
 
+// This can be cleaned up later...
 func mockTelegramsFromEnv() []string {
 	if path := strings.TrimSpace(os.Getenv("DSMR_MOCK_TELEGRAM_FILE")); path != "" {
 		bytes, err := os.ReadFile(path)

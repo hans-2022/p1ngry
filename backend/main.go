@@ -47,7 +47,7 @@ func main() {
 			defer publisher.Close()
 		}
 	case <-time.After(3 * time.Second):
-		slog.Warn("mqtt: startup timed out; continuing without publisher")
+		slog.Error("mqtt: startup timed out; continuing without publisher")
 	}
 
 	// Same for the DSMR reader, it also gets it own goroutine.
