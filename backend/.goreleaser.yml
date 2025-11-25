@@ -48,9 +48,8 @@ dockers:
       - "ghcr.io/erwindouna/p1nrgy:{{ .Version }}"
       - "ghcr.io/erwindouna/p1nrgy:latest"
     dockerfile: Dockerfile
-    use: buildx
-    build_flag_templates:
-      - "--platform=linux/amd64,linux/arm64"
+    goos: linux
+    goarch: amd64
 
 brews:
   - name: p1nrgy
