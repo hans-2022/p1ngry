@@ -51,20 +51,6 @@ dockers:
     goos: linux
     goarch: amd64
 
-brews:
-  - name: p1nrgy
-    repository:
-      owner: "erwindouna"
-      name: "homebrew-tap"
-    commit_author:
-      name: "goreleaser"
-      email: "e.douna@gmail.com"
-    description: "Tool for interacting with P1 electricity meter data."
-    test: |
-      system "#{bin}/p1nrgy --version"
-    install: |
-      bin.install "p1nrgy"
-
 changelog:
   sort: asc
   filters:
