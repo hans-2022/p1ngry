@@ -17,7 +17,6 @@ require (
 	github.com/redis/go-redis/v9 v9.14.0
 	github.com/roaldnefs/go-dsmr v0.0.0-20230102160811-e15b2d17ad5f
 	github.com/stretchr/testify v1.11.1
-	github.com/swaggo/swag v1.16.6
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 	golang.org/x/crypto v0.42.0
 )
@@ -55,6 +54,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/swaggo/files/v2 v2.0.2 // indirect
+	github.com/swaggo/swag v1.16.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
