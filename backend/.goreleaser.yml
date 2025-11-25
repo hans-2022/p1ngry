@@ -45,8 +45,8 @@ checksum:
 
 dockers:
   - image_templates:
-      - "ghcr.io/{{ .Repo }}/p1nrgy:{{ .Version }}"
-      - "ghcr.io/{{ .Repo }}/p1nrgy:latest"
+      - "ghcr.io/erwindouna/p1nrgy:{{ .Version }}"
+      - "ghcr.io/erwindouna/p1nrgy:latest"
     dockerfile: Dockerfile
     use: buildx
     build_flag_templates:
