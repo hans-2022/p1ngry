@@ -1,5 +1,10 @@
 FROM mcr.microsoft.com/devcontainers/go:2-1.25-bookworm
 
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends nodejs npm \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>

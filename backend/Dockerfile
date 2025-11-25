@@ -1,6 +1,6 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
-LABEL maintainer="Vic Shóstak <vic@shostak.dev> (https://shostak.dev/)"
+LABEL maintainer="Erwin Douna <e.douna@gmail.com> (https://github.com/erwindouna)"
 
 # Move to working directory (/build).
 WORKDIR /build
@@ -14,12 +14,12 @@ COPY . .
 
 # Set necessary environment variables needed for our image and build the API server.
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-RUN go build -ldflags="-s -w" -o apiserver .
+RUN go build -ldflags="-s -w" -o p1ngry .
 
 FROM scratch
 
 # Copy binary and config files from /build to root folder of scratch container.
-COPY --from=builder ["/build/apiserver", "/build/.env", "/"]
+COPY --from=builder ["/build/p1ngry", "/build/.env", "/"]
 
 # Command to run when starting the container.
-ENTRYPOINT ["/apiserver"]
+ENTRYPOINT ["/p1ngry"]
