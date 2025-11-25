@@ -3,11 +3,11 @@ version: 1
 
 before:
   hooks:
-    - cd backend && go mod tidy
+    - go mod tidy
 
 builds:
   - id: p1nrgy
-    main: ./backend/p1nrgy
+    main: .
     binary: p1nrgy
     env:
       - CGO_ENABLED=0
