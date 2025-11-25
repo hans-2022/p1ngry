@@ -13,8 +13,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	_ "github.com/erwindouna/p1ngry/docs" // load API Docs files (Swagger)
-	_ "github.com/joho/godotenv/autoload" // load .env file automatically
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -31,7 +30,6 @@ func main() {
 	// Routes.
 	routes.SwaggerRoute(app)
 	routes.PublicRoutes(app)
-	routes.PrivateRoutes(app)
 	routes.NotFoundRoute(app)
 
 	// Put it in a goroutine to not block the main thread.

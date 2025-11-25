@@ -3,7 +3,6 @@ package database
 import (
 	"os"
 
-	"github.com/erwindouna/p1ngry/app/queries"
 	"github.com/jmoiron/sqlx"
 )
 
