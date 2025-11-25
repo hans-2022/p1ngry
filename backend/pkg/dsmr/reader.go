@@ -273,8 +273,9 @@ func newSource(cfg Config) (source, error) {
 }
 
 type serialSource struct {
-	port   io.ReadCloser
-	reader *bufio.Reader
+	port      io.ReadCloser
+	reader    *bufio.Reader
+	connected bool
 }
 
 func newSerialSource(cfg SerialConfig) (*serialSource, error) {

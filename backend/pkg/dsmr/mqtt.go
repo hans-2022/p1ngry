@@ -176,6 +176,15 @@ func (p *MQTTPublisher) Close() {
 	}
 }
 
+func (p *MQTTPublisher) Connected() bool {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	if p.client == nil {
+		return false
+	}
+	return p.client.IsConnectionOpen()
+}
+
 func PublishSmartMeterData(client mqtt.Client, topic string, data SmartMeterData) error {
 	if client == nil {
 		slog.Error("mqtt: publish skipped; client not initialised")
