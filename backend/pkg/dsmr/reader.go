@@ -209,7 +209,7 @@ func RunReader() {
 		currentMetrics = data
 		metricsMu.Unlock()
 
-		if boolFromEnv("DEBUG_LOGGING") == "false" {
+		if boolFromEnv("DEBUG_LOGGING", false) {
 			slog.Info("dsmr: telegram received", "telegram", data)
 		}
 		dispatchHandlers(ctx, data)
