@@ -45,24 +45,24 @@ checksum:
 
 dockers:
   - image_templates:
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-amd64
     dockerfile: Dockerfile
     goos: linux
     goarch: amd64
   - image_templates:
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-arm64
     dockerfile: Dockerfile
     goos: linux
     goarch: arm64
 docker_manifests:
-  - name_template: ghcr.io/erwindouna/p1nrgy:{{ .Version }}
+  - name_template: ghcr.io/hans-2022/p1nrgy:{{ .Version }}
     image_templates:
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
-  - name_template: ghcr.io/erwindouna/p1nrgy:latest
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-amd64
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-arm64
+  - name_template: ghcr.io/hans-2022/p1nrgy:latest
     image_templates:
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-amd64
-      - ghcr.io/erwindouna/p1nrgy:{{ .Version }}-arm64
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-amd64
+      - ghcr.io/hans-2022/p1nrgy:{{ .Version }}-arm64
       
 changelog:
   sort: asc
@@ -73,7 +73,7 @@ changelog:
 
 release:
   github:
-    owner: "erwindouna"
+    owner: "hans-2022"
     name: "p1ngry"
   draft: false
   prerelease: auto
