@@ -1,5 +1,5 @@
 FROM alpine:3.20
-# new contaimer apprach
+# new container apprach
 
 RUN apk add --no-cache jq
 
