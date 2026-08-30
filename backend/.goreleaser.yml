@@ -47,6 +47,8 @@ dockers:
   - image_templates:
       - "ghcr.io/hans-2022/p1nrgy:{{ .Version }}-amd64"
     dockerfile: Dockerfile
+    extra_files:
+      - entrypoint.sh
     goos: linux
     goarch: amd64
     use: buildx
@@ -56,6 +58,8 @@ dockers:
   - image_templates:
       - "ghcr.io/hans-2022/p1nrgy:{{ .Version }}-arm64"
     dockerfile: Dockerfile
+    extra_files:
+      - entrypoint.sh
     goos: linux
     goarch: arm64
     use: buildx
