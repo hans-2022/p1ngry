@@ -4,7 +4,7 @@ FROM alpine:3.20
 RUN apk add --no-cache jq
 
 LABEL \
-  io.hass.version="0.0.5-HD4" \
+  io.hass.version="0.0.5-HD4.1" \
   io.hass.type="app" \
   io.hass.arch="aarch64|amd64"
 
