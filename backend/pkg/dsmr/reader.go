@@ -60,6 +60,14 @@ type SmartMeterData struct {
 	PowerDeliveredTariff2   float64
 	PowerGeneratedTariff1   float64
 	PowerGeneratedTariff2   float64
+    // --- HD: Phase power measurements for EMS ---	
+	PowerConsumptionL1      float64
+    PowerConsumptionL2      float64
+    PowerConsumptionL3      float64
+    PowerGenerationL1       float64
+    PowerGenerationL2       float64
+    PowerGenerationL3       float64
+	// --- HD: End phase power measurements ---
 }
 
 type Handler interface {
@@ -440,6 +448,53 @@ func (m *mockSource) Next(ctx context.Context) (string, error) {
 
 func (m *mockSource) Close() error { return nil }
 
+// --- HD: Phase power measurements for EMS ---
+// --- Deze niet gevonden in https://github.com/roaldnefs/go-dsmr/blob/main/telegram.go
+
+func actualPowerDeliveredL1(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:21.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+func actualPowerDeliveredL2(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:41.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+func actualPowerDeliveredL3(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:61.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+func actualPowerReceivedL1(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:22.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+func actualPowerReceivedL2(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:42.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+func actualPowerReceivedL3(tele dsmr.Telegram) (string, bool) {
+	if do, ok := tele.DataObjects["1-0:62.7.0"]; ok {
+		return do.Value, true
+	}
+	return "", false
+}
+
+// --- HD: End phase power measurements ---
+
 func decodeTelegram(raw string) (SmartMeterData, error) {
 	tele, err := dsmr.ParseTelegram(raw)
 	if err != nil {
@@ -475,6 +530,33 @@ func decodeTelegram(raw string) (SmartMeterData, error) {
 	if raw, ok := tele.InstantaneousCurrentL3(); ok {
 		set(raw, func(v float64) { data.InstCurrentL3 = v })
 	}
+	// --- HD: Additional phase power measurements for EMS ---
+    // --- extra power delivered and received on L1, L2 and L3
+    if raw, ok := actualPowerDeliveredL1(tele); ok {
+	    set(raw, func(v float64) { data.PowerConsumptionL1 = v })
+    }
+
+    if raw, ok := actualPowerDeliveredL2(tele); ok {
+	    set(raw, func(v float64) { data.PowerConsumptionL2 = v })
+    }
+
+    if raw, ok := actualPowerDeliveredL3(tele); ok {
+	    set(raw, func(v float64) { data.PowerConsumptionL3 = v })
+    }
+
+    if raw, ok := actualPowerReceivedL1(tele); ok {
+	    set(raw, func(v float64) { data.PowerGenerationL1 = v })
+    }
+
+    if raw, ok := actualPowerReceivedL2(tele); ok {
+	    set(raw, func(v float64) { data.PowerGenerationL2 = v })
+    }
+
+    if raw, ok := actualPowerReceivedL3(tele); ok {
+	    set(raw, func(v float64) { data.PowerGenerationL3 = v })
+    }
+    // --- HD: End additional phase power measurements ---
+	
 	if raw, ok := tele.MeterReadingElectricityDeliveredToClientTariff1(); ok {
 		set(raw, func(v float64) { data.PowerDeliveredTariff1 = v })
 	}
